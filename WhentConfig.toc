@@ -1,7 +1,8 @@
 ## Interface: 90200
 ## Version: 0.0.1
 ## Title: WhentConfig
-## Notes: Collection of UI Configuration & Fixes.
+## Notes: Collection of UI configurations & fixes.
 ## Author: Whent
+## SavedVariables: WhentConfigDB
 
 WhentConfig.xml
