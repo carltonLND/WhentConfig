@@ -5,3 +5,4 @@ Core Addon:
 Raid Profiles:
   Disable blizzard autoprofile switching on all profiles upon login
   Clean up options interface
+  Add button to redirect to blizzard raid profiles interface options panel
