@@ -1,4 +1,4 @@
-local RaidProfiles = WhentConfig:NewModule("RaidProfiles", "AceEvent-3.0", "AceBucket-3.0")
+local RaidProfiles = WhentConfig:NewModule("RaidProfiles", "AceEvent-3.0", "AceTimer-3.0", "AceBucket-3.0")
 
 local function PopulateRaidProfiles()
   local PlayerRaidProfiles = {}
@@ -19,7 +19,7 @@ local function FindSelectedRaidProfile(profileSize)
       return key
     end
   end
-  
+
   return nil
 end
 
@@ -129,18 +129,19 @@ function RaidProfiles:OnEnable()
 end
 
 local function switchRaidProfile(groupSize)
+  local profileList = WhentConfig.db.profile.RaidProfiles
   if groupSize <= 3 then
-    CompactUnitFrameProfiles_ActivateRaidProfile(WhentConfig.db.profile.RaidProfiles.small)
+    CompactUnitFrameProfiles_ActivateRaidProfile(profileList.small)
   elseif groupSize > 3 and groupSize <= 4 then
-    CompactUnitFrameProfiles_ActivateRaidProfile(WhentConfig.db.profile.RaidProfiles.medium)
+    CompactUnitFrameProfiles_ActivateRaidProfile(profileList.medium)
   elseif groupSize > 5 and groupSize <= 10 then
-    CompactUnitFrameProfiles_ActivateRaidProfile(WhentConfig.db.profile.RaidProfiles.smallRaid)
+    CompactUnitFrameProfiles_ActivateRaidProfile(profileList.smallRaid)
   elseif groupSize > 10 and groupSize <= 15 then
-    CompactUnitFrameProfiles_ActivateRaidProfile(WhentConfig.db.profile.RaidProfiles.mediumRaid)
+    CompactUnitFrameProfiles_ActivateRaidProfile(profileList.mediumRaid)
   elseif groupSize > 15 and groupSize <= 25 then
-    CompactUnitFrameProfiles_ActivateRaidProfile(WhentConfig.db.profile.RaidProfiles.largeRaid)
+    CompactUnitFrameProfiles_ActivateRaidProfile(profileList.largeRaid)
   elseif groupSize > 25 then
-    CompactUnitFrameProfiles_ActivateRaidProfile(WhentConfig.db.profile.RaidProfiles.epicRaid)
+    CompactUnitFrameProfiles_ActivateRaidProfile(profileList.epicRaid)
   end
 end
 
