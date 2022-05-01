@@ -1,5 +1,5 @@
 <Ui>
-	<!-- Dependencies -->
+  <!-- Dependencies -->
   <Script file="Libs\LibStub\LibStub.lua"/>
   <Include file="Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml"/>
   <Include file="Libs\AceAddon-3.0\AceAddon-3.0.xml"/>
