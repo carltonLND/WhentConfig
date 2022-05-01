@@ -128,6 +128,7 @@ function RaidProfiles:OnEnable()
   self:RegisterEvent("PLAYER_LEAVE_COMBAT")
 end
 
+local scheduledProfileUpdate
 local function switchRaidProfile(groupSize)
   local profileList = WhentConfig.db.profile.RaidProfiles
   if groupSize <= 3 then
@@ -143,9 +144,10 @@ local function switchRaidProfile(groupSize)
   elseif groupSize > 25 then
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.epicRaid)
   end
+
+  scheduledProfileUpdate = false
 end
 
-local scheduledProfileUpdate
 local newGroupSize
 local function combatCheck()
   newGroupSize = GetNumGroupMembers()
