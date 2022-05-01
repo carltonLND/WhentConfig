@@ -1,4 +1,4 @@
-local RaidProfiles = WhentConfig:NewModule("RaidProfiles")
+local RaidProfiles = WhentConfig:NewModule("RaidProfiles", "AceEvent-3.0", "AceBucket-3.0")
 
 local function PopulateRaidProfiles()
   local PlayerRaidProfiles = {}
@@ -120,3 +120,48 @@ RaidProfiles.defaults = {
   largeRaid = "Primary",
   epicRaid = "Primary",
 }
+
+function RaidProfiles:OnEnable()
+  self:RegisterBucketEvent("GROUP_ROSTER_UPDATE", 0.5, "RosterUpdate")
+  self:RegisterEvent("PLAYER_LEAVE_COMBAT")
+end
+
+local function switchRaidProfile(groupSize)
+  if groupSize <= 3 then
+    CompactUnitFrameProfiles_ActivateRaidProfile(WhentConfig.db.profile.RaidProfiles.small)
+  elseif groupSize > 3 and groupSize <= 4 then
+    CompactUnitFrameProfiles_ActivateRaidProfile(WhentConfig.db.profile.RaidProfiles.medium)
+  elseif groupSize > 5 and groupSize <= 10 then
+    CompactUnitFrameProfiles_ActivateRaidProfile(WhentConfig.db.profile.RaidProfiles.smallRaid)
+  elseif groupSize > 10 and groupSize <= 15 then
+    CompactUnitFrameProfiles_ActivateRaidProfile(WhentConfig.db.profile.RaidProfiles.mediumRaid)
+  elseif groupSize > 15 and groupSize <= 25 then
+    CompactUnitFrameProfiles_ActivateRaidProfile(WhentConfig.db.profile.RaidProfiles.largeRaid)
+  elseif groupSize > 25 then
+    CompactUnitFrameProfiles_ActivateRaidProfile(WhentConfig.db.profile.RaidProfiles.epicRaid)
+  end
+end
+
+local scheduledProfileUpdate
+local newGroupSize
+local function combatCheck()
+  newGroupSize = GetNumGroupMembers()
+  if InCombatLockdown() then
+    scheduledProfileUpdate = true
+    return
+  end
+end
+
+function RaidProfiles:RosterUpdate()
+  combatCheck()
+  switchRaidProfile(newGroupSize)
+end
+
+function RaidProfiles:PLAYER_LEAVE_COMBAT()
+  if not scheduledProfileUpdate then
+    return
+  end
+
+  combatCheck()
+  switchRaidProfile(newGroupSize)
+end
