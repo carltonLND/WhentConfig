@@ -19,16 +19,19 @@ function WhentConfig:OnInitialize()
   for name, module in WhentConfig:IterateModules() do
     module.options.order = order
     WhentConfig_Options.args[name] = module.options
+    WhentConfig_Defaults.profile[name] = module.defaults
     order = order + 1
   end
 
   WhentConfig_Options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
+end
+
+function WhentConfig:OnEnable()
+  for _, module in WhentConfig:IterateModules() do
+    module:Enable()
+  end
 
   -- self.db.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
   -- self.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
   -- self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
-end
-
-function WhentConfig:OnEnable()
-  WhentConfig:EnableModule("RaidProfiles")
 end
