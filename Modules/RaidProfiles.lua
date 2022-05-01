@@ -19,6 +19,8 @@ local function FindSelectedRaidProfile(profileSize)
       return key
     end
   end
+  
+  return nil
 end
 
 RaidProfiles.options = {
