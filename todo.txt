@@ -1,0 +1,7 @@
+Core Addon:
+  Update Infotext
+  Add reloadui button
+
+Raid Profiles:
+  Disable blizzard autoprofile switching on all profiles upon login
+  Clean up options interface
