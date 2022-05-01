@@ -37,7 +37,7 @@ RaidProfiles.options = {
         WhentConfig.db.profile.RaidProfiles.small = GetRaidProfileName(val)
       end,
       get = function(info)
-        return FindSelectedRaidProfile("small")
+        return FindSelectedRaidProfile "small"
       end,
       style = "dropdown",
     },
@@ -51,7 +51,7 @@ RaidProfiles.options = {
         WhentConfig.db.profile.RaidProfiles.medium = GetRaidProfileName(val)
       end,
       get = function(info)
-        return FindSelectedRaidProfile("medium")
+        return FindSelectedRaidProfile "medium"
       end,
       style = "dropdown",
     },
@@ -65,7 +65,7 @@ RaidProfiles.options = {
         WhentConfig.db.profile.RaidProfiles.smallRaid = GetRaidProfileName(val)
       end,
       get = function(info)
-        return FindSelectedRaidProfile("smallRaid")
+        return FindSelectedRaidProfile "smallRaid"
       end,
       style = "dropdown",
     },
@@ -79,7 +79,7 @@ RaidProfiles.options = {
         WhentConfig.db.profile.RaidProfiles.mediumRaid = GetRaidProfileName(val)
       end,
       get = function(info)
-        return FindSelectedRaidProfile("mediumRaid")
+        return FindSelectedRaidProfile "mediumRaid"
       end,
       style = "dropdown",
     },
@@ -93,7 +93,7 @@ RaidProfiles.options = {
         WhentConfig.db.profile.RaidProfiles.largeRaid = GetRaidProfileName(val)
       end,
       get = function(info)
-        return FindSelectedRaidProfile("largeRaid")
+        return FindSelectedRaidProfile "largeRaid"
       end,
       style = "dropdown",
     },
@@ -107,7 +107,7 @@ RaidProfiles.options = {
         WhentConfig.db.profile.RaidProfiles.epicRaid = GetRaidProfileName(val)
       end,
       get = function(info)
-        return FindSelectedRaidProfile("epicRaid")
+        return FindSelectedRaidProfile "epicRaid"
       end,
       style = "dropdown",
     },
@@ -125,7 +125,7 @@ RaidProfiles.defaults = {
 
 function RaidProfiles:OnEnable()
   self:RegisterBucketEvent("GROUP_ROSTER_UPDATE", 0.5, "RosterUpdate")
-  self:RegisterEvent("PLAYER_LEAVE_COMBAT")
+  self:RegisterEvent "PLAYER_LEAVE_COMBAT"
 end
 
 local scheduledProfileUpdate
@@ -153,12 +153,17 @@ local function combatCheck()
   newGroupSize = GetNumGroupMembers()
   if InCombatLockdown() then
     scheduledProfileUpdate = true
-    return
+    return true
   end
+
+  return false
 end
 
 function RaidProfiles:RosterUpdate()
-  combatCheck()
+  if combatCheck() then
+    return
+  end
+
   switchRaidProfile(newGroupSize)
 end
 
@@ -167,6 +172,9 @@ function RaidProfiles:PLAYER_LEAVE_COMBAT()
     return
   end
 
-  combatCheck()
+  if combatCheck() then
+    return
+  end
+
   switchRaidProfile(newGroupSize)
 end
