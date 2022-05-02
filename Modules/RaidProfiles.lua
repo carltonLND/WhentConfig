@@ -1,20 +1,7 @@
 local RaidProfiles = WhentConfig:NewModule("RaidProfiles", "AceEvent-3.0", "AceTimer-3.0", "AceBucket-3.0")
 
-local function PopulateRaidProfiles()
-  local PlayerRaidProfiles = {}
-  local NumProfiles = GetNumRaidProfiles()
-
-  repeat
-    local RaidProfileName = GetRaidProfileName(NumProfiles)
-    PlayerRaidProfiles[NumProfiles] = RaidProfileName
-    NumProfiles = NumProfiles - 1
-  until NumProfiles == 0
-
-  return PlayerRaidProfiles
-end
-
 local function FindSelectedRaidProfile(profileSize)
-  for key, value in pairs(PopulateRaidProfiles()) do
+  for key, value in pairs(RaidProfiles:PopulateRaidProfiles()) do
     if value == WhentConfig.db.profile.RaidProfiles[profileSize] then
       return key
     end
@@ -26,19 +13,16 @@ end
 RaidProfiles.options = {
   name = "Raid Profiles",
   type = "group",
+  handler = RaidProfiles,
   args = {
     small = {
       name = "2/3 Player Group",
       desc = "Raid profile to use in a 2/3 player group (e.g. Arenas)",
       order = 0,
       type = "select",
-      values = PopulateRaidProfiles(),
-      set = function(info, val)
-        WhentConfig.db.profile.RaidProfiles.small = GetRaidProfileName(val)
-      end,
-      get = function(info)
-        return FindSelectedRaidProfile "small"
-      end,
+      values = "PopulateRaidProfiles",
+      set = "RaidProfileSetter",
+      get = "RaidProfileGetter",
       style = "dropdown",
     },
     medium = {
@@ -46,13 +30,9 @@ RaidProfiles.options = {
       desc = "Raid profile to use in a 5 player group (e.g. Dungeons)",
       order = 1,
       type = "select",
-      values = PopulateRaidProfiles(),
-      set = function(info, val)
-        WhentConfig.db.profile.RaidProfiles.medium = GetRaidProfileName(val)
-      end,
-      get = function(info)
-        return FindSelectedRaidProfile "medium"
-      end,
+      values = "PopulateRaidProfiles",
+      set = "RaidProfileSetter",
+      get = "RaidProfileGetter",
       style = "dropdown",
     },
     smallRaid = {
@@ -60,13 +40,9 @@ RaidProfiles.options = {
       desc = "Raid profile to use in a 10 player group (e.g. Raids/Small Battlegrounds)",
       order = 2,
       type = "select",
-      values = PopulateRaidProfiles(),
-      set = function(info, val)
-        WhentConfig.db.profile.RaidProfiles.smallRaid = GetRaidProfileName(val)
-      end,
-      get = function(info)
-        return FindSelectedRaidProfile "smallRaid"
-      end,
+      values = "PopulateRaidProfiles",
+      set = "RaidProfileSetter",
+      get = "RaidProfileGetter",
       style = "dropdown",
     },
     mediumRaid = {
@@ -74,13 +50,9 @@ RaidProfiles.options = {
       desc = "Raid profile to use in a 15 player group (e.g. Raids/Medium Battlegrounds)",
       order = 3,
       type = "select",
-      values = PopulateRaidProfiles(),
-      set = function(info, val)
-        WhentConfig.db.profile.RaidProfiles.mediumRaid = GetRaidProfileName(val)
-      end,
-      get = function(info)
-        return FindSelectedRaidProfile "mediumRaid"
-      end,
+      values = "PopulateRaidProfiles",
+      set = "RaidProfileSetter",
+      get = "RaidProfileGetter",
       style = "dropdown",
     },
     largeRaid = {
@@ -88,13 +60,9 @@ RaidProfiles.options = {
       desc = "Raid profile to use in a 25 player group (e.g. Raids/Large Battlegrounds)",
       order = 4,
       type = "select",
-      values = PopulateRaidProfiles(),
-      set = function(info, val)
-        WhentConfig.db.profile.RaidProfiles.largeRaid = GetRaidProfileName(val)
-      end,
-      get = function(info)
-        return FindSelectedRaidProfile "largeRaid"
-      end,
+      values = "PopulateRaidProfiles",
+      set = "RaidProfileSetter",
+      get = "RaidProfileGetter",
       style = "dropdown",
     },
     epicRaid = {
@@ -102,13 +70,9 @@ RaidProfiles.options = {
       desc = "Raid profile to use in a 40 player group (e.g. Raids/Epic Battlegrounds)",
       order = 5,
       type = "select",
-      values = PopulateRaidProfiles(),
-      set = function(info, val)
-        WhentConfig.db.profile.RaidProfiles.epicRaid = GetRaidProfileName(val)
-      end,
-      get = function(info)
-        return FindSelectedRaidProfile "epicRaid"
-      end,
+      values = "PopulateRaidProfiles",
+      set = "RaidProfileSetter",
+      get = "RaidProfileGetter",
       style = "dropdown",
     },
   },
@@ -125,7 +89,7 @@ RaidProfiles.defaults = {
 
 function RaidProfiles:OnEnable()
   self:RegisterBucketEvent("GROUP_ROSTER_UPDATE", 0.5, "RosterUpdate")
-  self:RegisterEvent "PLAYER_LEAVE_COMBAT"
+  self:RegisterEvent("PLAYER_LEAVE_COMBAT")
 end
 
 local scheduledProfileUpdate
@@ -146,6 +110,27 @@ local function switchRaidProfile(groupSize)
   end
 
   scheduledProfileUpdate = false
+end
+
+function RaidProfiles:RaidProfileSetter(info, val)
+  WhentConfig.db.profile.RaidProfiles[info[#info]] = GetRaidProfileName(val)
+end
+
+function RaidProfiles:RaidProfileGetter(info)
+  return FindSelectedRaidProfile(info[#info])
+end
+
+function RaidProfiles:PopulateRaidProfiles()
+  local PlayerRaidProfiles = {}
+  local NumProfiles = GetNumRaidProfiles()
+
+  repeat
+    local RaidProfileName = GetRaidProfileName(NumProfiles)
+    PlayerRaidProfiles[NumProfiles] = RaidProfileName
+    NumProfiles = NumProfiles - 1
+  until NumProfiles == 0
+
+  return PlayerRaidProfiles
 end
 
 local newGroupSize
