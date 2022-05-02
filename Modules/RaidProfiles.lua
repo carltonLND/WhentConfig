@@ -1,5 +1,5 @@
 local RaidProfiles = WhentConfig:NewModule("RaidProfiles", "AceEvent-3.0", "AceTimer-3.0", "AceBucket-3.0")
-local scheduledProfileUpdate
+local scheduledProfileUpdate = false
 local newGroupSize
 
 RaidProfiles.options = {
@@ -80,11 +80,11 @@ RaidProfiles.defaults = {
 }
 
 function RaidProfiles:OnEnable()
-  self:RegisterBucketEvent("GROUP_ROSTER_UPDATE", 0.5, "RosterUpdate")
-  self:RegisterEvent("PLAYER_LEAVE_COMBAT")
+  self:RegisterBucketEvent("GROUP_ROSTER_UPDATE", 0.2, "RosterUpdate")
+  self:RegisterEvent("PLAYER_REGEN_ENABLED")
 end
 
-local function switchRaidProfile(groupSize)
+function RaidProfiles:SwitchRaidProfile(groupSize)
   local profileList = WhentConfig.db.profile.RaidProfiles
   if groupSize <= 3 then
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.small)
@@ -128,32 +128,20 @@ function RaidProfiles:RaidProfileGetter(info)
   end
 end
 
-local function combatCheck()
+function RaidProfiles:RosterUpdate()
   newGroupSize = GetNumGroupMembers()
   if InCombatLockdown() then
     scheduledProfileUpdate = true
-    return true
+    return
   end
 
-  return false
+  RaidProfiles:SwitchRaidProfile(newGroupSize)
 end
 
-function RaidProfiles:RosterUpdate()
-  if combatCheck() then
+function RaidProfiles:PLAYER_REGEN_ENABLED()
+  if scheduledProfileUpdate == false then
     return
   end
 
-  switchRaidProfile(newGroupSize)
-end
-
-function RaidProfiles:PLAYER_LEAVE_COMBAT()
-  if not scheduledProfileUpdate then
-    return
-  end
-
-  if combatCheck() then
-    return
-  end
-
-  switchRaidProfile(newGroupSize)
+  RaidProfiles:SwitchRaidProfile(newGroupSize)
 end
