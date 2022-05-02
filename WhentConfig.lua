@@ -30,8 +30,4 @@ function WhentConfig:OnEnable()
   for _, module in WhentConfig:IterateModules() do
     module:Enable()
   end
-
-  -- self.db.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
-  -- self.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
-  -- self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
 end
