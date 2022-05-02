@@ -1,14 +1,6 @@
 local RaidProfiles = WhentConfig:NewModule("RaidProfiles", "AceEvent-3.0", "AceTimer-3.0", "AceBucket-3.0")
-
-local function FindSelectedRaidProfile(profileSize)
-  for key, value in pairs(RaidProfiles:PopulateRaidProfiles()) do
-    if value == WhentConfig.db.profile.RaidProfiles[profileSize] then
-      return key
-    end
-  end
-
-  return nil
-end
+local scheduledProfileUpdate
+local newGroupSize
 
 RaidProfiles.options = {
   name = "Raid Profiles",
@@ -92,7 +84,6 @@ function RaidProfiles:OnEnable()
   self:RegisterEvent("PLAYER_LEAVE_COMBAT")
 end
 
-local scheduledProfileUpdate
 local function switchRaidProfile(groupSize)
   local profileList = WhentConfig.db.profile.RaidProfiles
   if groupSize <= 3 then
@@ -112,14 +103,6 @@ local function switchRaidProfile(groupSize)
   scheduledProfileUpdate = false
 end
 
-function RaidProfiles:RaidProfileSetter(info, val)
-  WhentConfig.db.profile.RaidProfiles[info[#info]] = GetRaidProfileName(val)
-end
-
-function RaidProfiles:RaidProfileGetter(info)
-  return FindSelectedRaidProfile(info[#info])
-end
-
 function RaidProfiles:PopulateRaidProfiles()
   local PlayerRaidProfiles = {}
   local NumProfiles = GetNumRaidProfiles()
@@ -133,7 +116,18 @@ function RaidProfiles:PopulateRaidProfiles()
   return PlayerRaidProfiles
 end
 
-local newGroupSize
+function RaidProfiles:RaidProfileSetter(info, val)
+  WhentConfig.db.profile.RaidProfiles[info[#info]] = GetRaidProfileName(val)
+end
+
+function RaidProfiles:RaidProfileGetter(info)
+  for key, value in pairs(RaidProfiles:PopulateRaidProfiles()) do
+    if value == WhentConfig.db.profile.RaidProfiles[info[#info]] then
+      return key
+    end
+  end
+end
+
 local function combatCheck()
   newGroupSize = GetNumGroupMembers()
   if InCombatLockdown() then
