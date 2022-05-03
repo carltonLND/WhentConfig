@@ -90,6 +90,7 @@ RaidProfiles.defaults = {
 function RaidProfiles:OnEnable()
   self:RegisterBucketEvent("GROUP_ROSTER_UPDATE", 0.2, "RosterUpdate")
   self:RegisterEvent("PLAYER_REGEN_ENABLED")
+  self:RegisterEvent("PLAYER_REGEN_DISABLED")
   self:RegisterEvent("PLAYER_ENTERING_WORLD")
 end
 
@@ -97,28 +98,27 @@ function RaidProfiles:PLAYER_ENTERING_WORLD()
   C_CVar.SetCVar("useCompactPartyFrames", 1)
 end
 
-function RaidProfiles:SwitchRaidProfile(groupSize)
+function RaidProfiles:SwitchRaidProfile()
   local profileList = WhentConfig.db.profile.RaidProfiles
-  local currentProfile = C_CVar.GetCVar("activeCUFProfile")
 
-  if groupSize <= 3 and currentProfile ~= profileList.small then
+  if not RaidProfiles.inCombat and RaidProfiles.newGroupSize <= 3 then
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.small)
-  elseif groupSize > 3 and groupSize <= 5 and currentProfile ~= profileList.medium then
+  elseif not RaidProfiles.inCombat and RaidProfiles.newGroupSize > 3 and RaidProfiles.newGroupSize <= 5 then
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.medium)
-  elseif groupSize > 5 and groupSize <= 10 and currentProfile ~= profileList.smallRaid then
+  elseif not RaidProfiles.inCombat and RaidProfiles.newGroupSize > 5 and RaidProfiles.newGroupSize <= 10 then
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.smallRaid)
-  elseif groupSize > 10 and groupSize <= 15 and currentProfile ~= profileList.mediumRaid then
+  elseif not RaidProfiles.inCombat and RaidProfiles.newGroupSize > 10 and RaidProfiles.newGroupSize <= 15 then
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.mediumRaid)
-  elseif groupSize > 15 and groupSize <= 25 and currentProfile ~= profileList.largeRaid then
+  elseif not RaidProfiles.inCombat and RaidProfiles.newGroupSize > 15 and RaidProfiles.newGroupSize <= 25 then
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.largeRaid)
-  elseif groupSize > 25 and currentProfile ~= profileList.epicRaid then
+  elseif not RaidProfiles.inCombat and RaidProfiles.newGroupSize > 25 then
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.epicRaid)
   end
 
   RaidProfiles.scheduledProfileUpdate = false
 end
 
-function RaidProfiles:PopulateRaidProfiles(info)
+function RaidProfiles:PopulateRaidProfiles()
   local PlayerRaidProfiles = {}
   local NumProfiles = GetNumRaidProfiles()
 
@@ -145,18 +145,31 @@ end
 
 function RaidProfiles:RosterUpdate()
   RaidProfiles.newGroupSize = GetNumGroupMembers()
-  if InCombatLockdown() then
+  if RaidProfiles.inCombat then
     RaidProfiles.scheduledProfileUpdate = true
     return
   end
 
-  RaidProfiles:SwitchRaidProfile(RaidProfiles.newGroupSize)
+  RaidProfiles:SwitchRaidProfile()
 end
 
 function RaidProfiles:PLAYER_REGEN_ENABLED()
-  if RaidProfiles.scheduledProfileUpdate == false then
+  if InCombatLockdown() == true then
+    RaidProfiles.inCombat = true
     return
   end
 
-  RaidProfiles:SwitchRaidProfile(RaidProfiles.newGroupSize)
+  RaidProfiles.inCombat = false
+  if RaidProfiles.scheduledProfileUpdate then
+    RaidProfiles:SwitchRaidProfile()
+  end
+end
+
+function RaidProfiles:PLAYER_REGEN_DISABLED()
+  if InCombatLockdown() == false then
+    RaidProfiles.inCombat = false
+    return
+  end
+
+  RaidProfiles.inCombat = true
 end
