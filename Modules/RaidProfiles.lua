@@ -41,7 +41,7 @@ RaidProfiles.options = {
     },
     smallRaid = {
       name = "10 Player Group",
-      desc = "Raid profile to use in a 10 player group (e.g. Raids/Small Battlegrounds)",
+      desc = "Raid profile to use in a 10 player group (e.g. Small Raids/Battlegrounds)",
       order = 5,
       type = "select",
       values = "PopulateRaidProfiles",
@@ -50,7 +50,7 @@ RaidProfiles.options = {
     },
     mediumRaid = {
       name = "15 Player Group",
-      desc = "Raid profile to use in a 15 player group (e.g. Raids/Medium Battlegrounds)",
+      desc = "Raid profile to use in a 15 player group (e.g. Medium Raids/Battlegrounds)",
       order = 6,
       type = "select",
       values = "PopulateRaidProfiles",
@@ -59,7 +59,7 @@ RaidProfiles.options = {
     },
     largeRaid = {
       name = "25 Player Group",
-      desc = "Raid profile to use in a 25 player group (e.g. Raids/Large Battlegrounds)",
+      desc = "Raid profile to use in a 25 player group (e.g. Large Raids/Battlegrounds)",
       order = 7,
       type = "select",
       values = "PopulateRaidProfiles",
@@ -68,7 +68,7 @@ RaidProfiles.options = {
     },
     epicRaid = {
       name = "40 Player Group",
-      desc = "Raid profile to use in a 40 player group (e.g. Raids/Epic Battlegrounds)",
+      desc = "Raid profile to use in a 40 player group (e.g. Epic Raids/Battlegrounds)",
       order = 8,
       type = "select",
       values = "PopulateRaidProfiles",
