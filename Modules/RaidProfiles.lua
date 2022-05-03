@@ -88,7 +88,7 @@ RaidProfiles.defaults = {
 }
 
 function RaidProfiles:OnEnable()
-  self:RegisterBucketEvent("GROUP_ROSTER_UPDATE", 0.2, "RosterUpdate")
+  self:RegisterBucketEvent("GROUP_ROSTER_UPDATE", 1, "RosterUpdate")
   self:RegisterEvent("PLAYER_REGEN_ENABLED")
   self:RegisterEvent("PLAYER_REGEN_DISABLED")
   self:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -115,7 +115,9 @@ function RaidProfiles:SwitchRaidProfile()
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.epicRaid)
   end
 
-  RaidProfiles.scheduledProfileUpdate = false
+  if not RaidProfiles.inCombat then
+    RaidProfiles.scheduledProfileUpdate = false
+  end
 end
 
 function RaidProfiles:PopulateRaidProfiles()
