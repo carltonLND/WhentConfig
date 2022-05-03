@@ -1,71 +1,79 @@
 local RaidProfiles = WhentConfig:NewModule("RaidProfiles", "AceEvent-3.0", "AceTimer-3.0", "AceBucket-3.0")
-local scheduledProfileUpdate = false
-local newGroupSize
+
+RaidProfiles.scheduledProfileUpdate = false
+RaidProfiles.newGroupSize = 1
 
 RaidProfiles.options = {
   name = "Raid Profiles",
   type = "group",
   handler = RaidProfiles,
+  set = "RaidProfileSetter",
+  get = "RaidProfileGetter",
   args = {
+    title = {
+      name = "Raid Profile Selection",
+      order = 0,
+      type = "header",
+    },
+    desc = {
+      name = "Select your current Blizzard Raid Profiles to use under each group size.",
+      order = 1,
+      type = "description",
+    },
+    break1 = { name = " ", order = 2, type = "description" },
     small = {
       name = "2/3 Player Group",
       desc = "Raid profile to use in a 2/3 player group (e.g. Arenas)",
-      order = 0,
+      order = 3,
       type = "select",
       values = "PopulateRaidProfiles",
-      set = "RaidProfileSetter",
-      get = "RaidProfileGetter",
       style = "dropdown",
+      width = 1.2,
     },
     medium = {
       name = "5 Player Group",
       desc = "Raid profile to use in a 5 player group (e.g. Dungeons)",
-      order = 1,
+      order = 4,
       type = "select",
       values = "PopulateRaidProfiles",
-      set = "RaidProfileSetter",
-      get = "RaidProfileGetter",
       style = "dropdown",
+      width = 1.2,
     },
     smallRaid = {
       name = "10 Player Group",
       desc = "Raid profile to use in a 10 player group (e.g. Raids/Small Battlegrounds)",
-      order = 2,
+      order = 5,
       type = "select",
       values = "PopulateRaidProfiles",
-      set = "RaidProfileSetter",
-      get = "RaidProfileGetter",
       style = "dropdown",
+      width = 1.2,
     },
     mediumRaid = {
       name = "15 Player Group",
       desc = "Raid profile to use in a 15 player group (e.g. Raids/Medium Battlegrounds)",
-      order = 3,
+      order = 6,
       type = "select",
       values = "PopulateRaidProfiles",
-      set = "RaidProfileSetter",
-      get = "RaidProfileGetter",
       style = "dropdown",
+      width = 1.2,
     },
     largeRaid = {
       name = "25 Player Group",
       desc = "Raid profile to use in a 25 player group (e.g. Raids/Large Battlegrounds)",
-      order = 4,
+      order = 7,
       type = "select",
       values = "PopulateRaidProfiles",
-      set = "RaidProfileSetter",
-      get = "RaidProfileGetter",
       style = "dropdown",
+      width = 1.2,
     },
     epicRaid = {
       name = "40 Player Group",
       desc = "Raid profile to use in a 40 player group (e.g. Raids/Epic Battlegrounds)",
-      order = 5,
+      order = 8,
       type = "select",
       values = "PopulateRaidProfiles",
-      set = "RaidProfileSetter",
-      get = "RaidProfileGetter",
       style = "dropdown",
+      width = 1.2,
     },
   },
 }
@@ -82,28 +90,35 @@ RaidProfiles.defaults = {
 function RaidProfiles:OnEnable()
   self:RegisterBucketEvent("GROUP_ROSTER_UPDATE", 0.2, "RosterUpdate")
   self:RegisterEvent("PLAYER_REGEN_ENABLED")
+  self:RegisterEvent("PLAYER_ENTERING_WORLD")
+end
+
+function RaidProfiles:PLAYER_ENTERING_WORLD()
+  C_CVar.SetCVar("useCompactPartyFrames", 1)
 end
 
 function RaidProfiles:SwitchRaidProfile(groupSize)
   local profileList = WhentConfig.db.profile.RaidProfiles
-  if groupSize <= 3 then
+  local currentProfile = C_CVar.GetCVar("activeCUFProfile")
+
+  if groupSize <= 3 and currentProfile ~= profileList.small then
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.small)
-  elseif groupSize > 3 and groupSize <= 4 then
+  elseif groupSize > 3 and groupSize <= 5 and currentProfile ~= profileList.medium then
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.medium)
-  elseif groupSize > 5 and groupSize <= 10 then
+  elseif groupSize > 5 and groupSize <= 10 and currentProfile ~= profileList.smallRaid then
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.smallRaid)
-  elseif groupSize > 10 and groupSize <= 15 then
+  elseif groupSize > 10 and groupSize <= 15 and currentProfile ~= profileList.mediumRaid then
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.mediumRaid)
-  elseif groupSize > 15 and groupSize <= 25 then
+  elseif groupSize > 15 and groupSize <= 25 and currentProfile ~= profileList.largeRaid then
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.largeRaid)
-  elseif groupSize > 25 then
+  elseif groupSize > 25 and currentProfile ~= profileList.epicRaid then
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.epicRaid)
   end
 
-  scheduledProfileUpdate = false
+  RaidProfiles.scheduledProfileUpdate = false
 end
 
-function RaidProfiles:PopulateRaidProfiles()
+function RaidProfiles:PopulateRaidProfiles(info)
   local PlayerRaidProfiles = {}
   local NumProfiles = GetNumRaidProfiles()
 
@@ -129,19 +144,19 @@ function RaidProfiles:RaidProfileGetter(info)
 end
 
 function RaidProfiles:RosterUpdate()
-  newGroupSize = GetNumGroupMembers()
+  RaidProfiles.newGroupSize = GetNumGroupMembers()
   if InCombatLockdown() then
-    scheduledProfileUpdate = true
+    RaidProfiles.scheduledProfileUpdate = true
     return
   end
 
-  RaidProfiles:SwitchRaidProfile(newGroupSize)
+  RaidProfiles:SwitchRaidProfile(RaidProfiles.newGroupSize)
 end
 
 function RaidProfiles:PLAYER_REGEN_ENABLED()
-  if scheduledProfileUpdate == false then
+  if RaidProfiles.scheduledProfileUpdate == false then
     return
   end
 
-  RaidProfiles:SwitchRaidProfile(newGroupSize)
+  RaidProfiles:SwitchRaidProfile(RaidProfiles.newGroupSize)
 end
