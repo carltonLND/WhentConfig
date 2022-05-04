@@ -16,5 +16,5 @@
   <Script file="WhentConfig.lua"/>
 
   <!-- Modules -->
-  <Script file="Modules\RaidProfiles.lua"/>
+  <Script file="Modules\GroupFrames.lua"/>
 </Ui>
