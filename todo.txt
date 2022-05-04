@@ -2,7 +2,8 @@ Core Addon:
   Update Infotext
   Add reloadui button
 
-Raid Profiles:
+Group Frames:
+  Test dropdown values updating without a reload, potentially hook the CUF function
   Disable blizzard autoprofile switching on all profiles upon login
   Add button to redirect to blizzard raid profiles interface options panel
   Disable blizzard's "auto activate on" raid profile options from interface options panel (?)
