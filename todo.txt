@@ -1,5 +1,5 @@
 Core Addon:
   Add logo
 
-Raid Profiles:
+Group Frames:
   (?) Disable blizzard's "auto activate on" raid profile options from interface options panel (?)
