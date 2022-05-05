@@ -19,6 +19,7 @@ GroupFrames.options = {
       name = "Select your current Blizzard Raid Profile to use under each group size.",
       order = 1,
       type = "description",
+      fontSize = "medium",
     },
     break1 = { name = " ", order = 2, type = "description" },
     small = {
@@ -74,6 +75,25 @@ GroupFrames.options = {
       values = "PopulateGroupFrames",
       style = "dropdown",
       width = 1.2,
+    },
+    break2 = {
+      name = " ",
+      type = "description",
+      order = 9,
+    },
+    blizzOptions = {
+      name = "Blizzard Group Frame Config",
+      desc = "Opens Blizzard's Raid Profiles configuration menu.",
+      type = "execute",
+      order = 10,
+      func = "BlizzOptionsRedirect",
+      width = 1.2,
+    },
+    blizzOptionsDesc = {
+      name = "*Opens options panel to create and edit your group profiles!",
+      type = "description",
+      order = 11,
+      fontSize = "medium",
     },
   },
 }
@@ -174,4 +194,8 @@ function GroupFrames:PLAYER_REGEN_DISABLED()
   end
 
   GroupFrames.inCombat = true
+end
+
+function GroupFrames:BlizzOptionsRedirect()
+  InterfaceOptionsFrame_OpenToCategory("Raid Profiles")
 end
