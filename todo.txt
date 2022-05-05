@@ -1,8 +1,5 @@
 Core Addon:
-  Update Infotext
-  Add reloadui button
+  Add logo
 
 Raid Profiles:
-  Disable blizzard autoprofile switching on all profiles upon login
-  Add button to redirect to blizzard raid profiles interface options panel
-  Disable blizzard's "auto activate on" raid profile options from interface options panel (?)
+  (?) Disable blizzard's "auto activate on" raid profile options from interface options panel (?)
