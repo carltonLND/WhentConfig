@@ -2,6 +2,7 @@ local GroupFrames = WhentConfig:NewModule("GroupFrames", "AceEvent-3.0", "AceTim
 
 GroupFrames.scheduledProfileUpdate = false
 GroupFrames.newGroupSize = 1
+GroupFrames.inCombat = false
 
 GroupFrames.options = {
   name = "Group Frames",
@@ -141,20 +142,22 @@ function GroupFrames:SwitchRaidProfile()
 end
 
 function GroupFrames:PopulateGroupFrames()
-  local PlayerGroupFrames = {}
-  local NumProfiles = GetNumRaidProfiles()
+  local playerGroupFrames = {}
+  local numProfiles = GetNumRaidProfiles()
 
   repeat
-    local RaidProfileName = GetRaidProfileName(NumProfiles)
-    PlayerGroupFrames[NumProfiles] = RaidProfileName
-    NumProfiles = NumProfiles - 1
-  until NumProfiles == 0
+    local raidProfileName = GetRaidProfileName(numProfiles)
+    playerGroupFrames[numProfiles] = raidProfileName
+    numProfiles = numProfiles - 1
+  until numProfiles == 0
 
-  return PlayerGroupFrames
+  return playerGroupFrames
 end
 
 function GroupFrames:GroupFramesSetter(info, val)
-  WhentConfig.db.profile.GroupFrames[info[#info]] = GetRaidProfileName(val)
+  local raidProfileName = GetRaidProfileName(val)
+  WhentConfig.db.profile.GroupFrames[info[#info]] = raidProfileName
+  GroupFrames:DisableBlizzAutoActivate(raidProfileName)
 end
 
 function GroupFrames:GroupFramesGetter(info)
@@ -198,4 +201,23 @@ end
 
 function GroupFrames:BlizzOptionsRedirect()
   InterfaceOptionsFrame_OpenToCategory("Raid Profiles")
+end
+
+function GroupFrames:DisableBlizzAutoActivate(raidProfile)
+  if GroupFrames.inCombat then
+    return
+  end
+
+  local auto = "autoActivate"
+  local profileOptions = GetRaidProfileFlattenedOptions(raidProfile)
+
+  for key, _ in pairs(profileOptions) do
+    if string.find(key, auto) then
+      SetActiveRaidProfile(raidProfile)
+      SetRaidProfileOption(raidProfile, key, false)
+      CompactUnitFrameProfiles_UpdateCurrentPanel()
+      CompactUnitFrameProfiles_ApplyCurrentSettings()
+      CompactUnitFrameProfiles_UpdateManagementButtons()
+    end
+  end
 end
