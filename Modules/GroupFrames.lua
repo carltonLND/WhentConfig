@@ -157,11 +157,11 @@ end
 function GroupFrames:GroupFramesSetter(info, val)
   local raidProfileName = GetRaidProfileName(val)
   WhentConfig.db.profile.GroupFrames[info[#info]] = raidProfileName
-  GroupFrames:DisableBlizzAutoActivate(raidProfileName)
+  self:DisableBlizzAutoActivate(raidProfileName)
 end
 
 function GroupFrames:GroupFramesGetter(info)
-  for key, value in pairs(GroupFrames:PopulateGroupFrames()) do
+  for key, value in pairs(self:PopulateGroupFrames()) do
     if value == WhentConfig.db.profile.GroupFrames[info[#info]] then
       return key
     end
@@ -175,7 +175,7 @@ function GroupFrames:RosterUpdate()
     return
   end
 
-  GroupFrames:SwitchRaidProfile()
+  self:SwitchRaidProfile()
 end
 
 function GroupFrames:PLAYER_REGEN_ENABLED()
@@ -186,7 +186,7 @@ function GroupFrames:PLAYER_REGEN_ENABLED()
 
   GroupFrames.inCombat = false
   if GroupFrames.scheduledProfileUpdate then
-    GroupFrames:SwitchRaidProfile()
+    self:SwitchRaidProfile()
   end
 end
 
@@ -208,11 +208,9 @@ function GroupFrames:DisableBlizzAutoActivate(raidProfile)
     return
   end
 
-  local auto = "autoActivate"
   local profileOptions = GetRaidProfileFlattenedOptions(raidProfile)
-
   for key, _ in pairs(profileOptions) do
-    if string.find(key, auto) then
+    if string.find(key, "autoActivate") then
       SetActiveRaidProfile(raidProfile)
       SetRaidProfileOption(raidProfile, key, false)
       CompactUnitFrameProfiles_UpdateCurrentPanel()
