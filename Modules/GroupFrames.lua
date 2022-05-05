@@ -122,22 +122,22 @@ end
 function GroupFrames:SwitchRaidProfile()
   local profileList = WhentConfig.db.profile.GroupFrames
 
-  if GroupFrames.newGroupSize <= 3 then
+  if self.newGroupSize <= 3 then
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.small)
-  elseif GroupFrames.newGroupSize > 3 and GroupFrames.newGroupSize <= 5 then
+  elseif self.newGroupSize > 3 and self.newGroupSize <= 5 then
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.medium)
-  elseif GroupFrames.newGroupSize > 5 and GroupFrames.newGroupSize <= 10 then
+  elseif self.newGroupSize > 5 and self.newGroupSize <= 10 then
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.smallRaid)
-  elseif GroupFrames.newGroupSize > 10 and GroupFrames.newGroupSize <= 15 then
+  elseif self.newGroupSize > 10 and self.newGroupSize <= 15 then
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.mediumRaid)
-  elseif GroupFrames.newGroupSize > 15 and GroupFrames.newGroupSize <= 25 then
+  elseif self.newGroupSize > 15 and self.newGroupSize <= 25 then
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.largeRaid)
-  elseif GroupFrames.newGroupSize > 25 then
+  elseif self.newGroupSize > 25 then
     CompactUnitFrameProfiles_ActivateRaidProfile(profileList.epicRaid)
   end
 
-  if not GroupFrames.inCombat then
-    GroupFrames.scheduledProfileUpdate = false
+  if not self.inCombat then
+    self.scheduledProfileUpdate = false
   end
 end
 
@@ -169,9 +169,9 @@ function GroupFrames:GroupFramesGetter(info)
 end
 
 function GroupFrames:RosterUpdate()
-  GroupFrames.newGroupSize = GetNumGroupMembers()
-  if GroupFrames.inCombat then
-    GroupFrames.scheduledProfileUpdate = true
+  self.newGroupSize = GetNumGroupMembers()
+  if self.inCombat then
+    self.scheduledProfileUpdate = true
     return
   end
 
@@ -180,23 +180,23 @@ end
 
 function GroupFrames:PLAYER_REGEN_ENABLED()
   if InCombatLockdown() == true then
-    GroupFrames.inCombat = true
+    self.inCombat = true
     return
   end
 
-  GroupFrames.inCombat = false
-  if GroupFrames.scheduledProfileUpdate then
+  self.inCombat = false
+  if self.scheduledProfileUpdate then
     self:SwitchRaidProfile()
   end
 end
 
 function GroupFrames:PLAYER_REGEN_DISABLED()
   if InCombatLockdown() == false then
-    GroupFrames.inCombat = false
+    self.inCombat = false
     return
   end
 
-  GroupFrames.inCombat = true
+  self.inCombat = true
 end
 
 function GroupFrames:BlizzOptionsRedirect()
@@ -204,7 +204,7 @@ function GroupFrames:BlizzOptionsRedirect()
 end
 
 function GroupFrames:DisableBlizzAutoActivate(raidProfile)
-  if GroupFrames.inCombat then
+  if self.inCombat then
     return
   end
 
