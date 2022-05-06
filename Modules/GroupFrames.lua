@@ -1,4 +1,15 @@
 local GroupFrames = WhentConfig:NewModule("GroupFrames", "AceEvent-3.0", "AceTimer-3.0", "AceBucket-3.0")
+local db
+
+function GroupFrames:OnInitialize()
+  db = WhentConfig.db.profile.GroupFrames
+end
+
+function GroupFrames:OnEnable()
+  self:RegisterBucketEvent("GROUP_ROSTER_UPDATE", 1, "RosterUpdate")
+  self:RegisterEvent("PLAYER_REGEN_ENABLED")
+  self:RegisterEvent("PLAYER_REGEN_DISABLED")
+end
 
 GroupFrames.scheduledProfileUpdate = false
 GroupFrames.newGroupSize = 1
@@ -23,28 +34,38 @@ GroupFrames.options = {
       fontSize = "medium",
     },
     break1 = { name = " ", order = 2, type = "description" },
+    raidStyleToggle = {
+      name = "Use Raid-Style Party Frames",
+      type = "toggle",
+      order = 3,
+      get = "ToggleRaidStyleGetter",
+      set = "ToggleRaidStyleSetter",
+      width = 2,
+    },
     small = {
       name = "2/3 Player Group",
       desc = "Raid profile to use in a 2/3 player group (e.g. Arenas)",
-      order = 3,
-      type = "select",
-      values = "PopulateGroupFrames",
-      style = "dropdown",
-      width = 1.2,
-    },
-    medium = {
-      name = "5 Player Group",
-      desc = "Raid profile to use in a 5 player group (e.g. Dungeons)",
       order = 4,
       type = "select",
       values = "PopulateGroupFrames",
       style = "dropdown",
       width = 1.2,
+      disabled = "UpdateRaidStyleSelector",
+    },
+    medium = {
+      name = "5 Player Group",
+      desc = "Raid profile to use in a 5 player group (e.g. Dungeons)",
+      order = 5,
+      type = "select",
+      values = "PopulateGroupFrames",
+      style = "dropdown",
+      width = 1.2,
+      disabled = "UpdateRaidStyleSelector",
     },
     smallRaid = {
       name = "10 Player Group",
       desc = "Raid profile to use in a 10 player group (e.g. Small Raids/Battlegrounds)",
-      order = 5,
+      order = 6,
       type = "select",
       values = "PopulateGroupFrames",
       style = "dropdown",
@@ -53,7 +74,7 @@ GroupFrames.options = {
     mediumRaid = {
       name = "15 Player Group",
       desc = "Raid profile to use in a 15 player group (e.g. Medium Raids/Battlegrounds)",
-      order = 6,
+      order = 7,
       type = "select",
       values = "PopulateGroupFrames",
       style = "dropdown",
@@ -62,7 +83,7 @@ GroupFrames.options = {
     largeRaid = {
       name = "25 Player Group",
       desc = "Raid profile to use in a 25 player group (e.g. Large Raids/Battlegrounds)",
-      order = 7,
+      order = 8,
       type = "select",
       values = "PopulateGroupFrames",
       style = "dropdown",
@@ -71,7 +92,7 @@ GroupFrames.options = {
     epicRaid = {
       name = "40 Player Group",
       desc = "Raid profile to use in a 40 player group (e.g. Epic Raids/Battlegrounds)",
-      order = 8,
+      order = 9,
       type = "select",
       values = "PopulateGroupFrames",
       style = "dropdown",
@@ -80,26 +101,27 @@ GroupFrames.options = {
     break2 = {
       name = " ",
       type = "description",
-      order = 9,
+      order = 10,
     },
     blizzOptions = {
       name = "Blizzard Group Frame Config",
       desc = "Opens Blizzard's Raid Profiles configuration menu.",
       type = "execute",
-      order = 10,
+      order = 11,
       func = "BlizzOptionsRedirect",
       width = 1.2,
     },
     blizzOptionsDesc = {
       name = "*Opens options panel to create and edit your group profiles!",
       type = "description",
-      order = 11,
+      order = 12,
       fontSize = "medium",
     },
   },
 }
 
 GroupFrames.defaults = {
+  raidStyleToggle = false,
   small = "Primary",
   medium = "Primary",
   smallRaid = "Primary",
@@ -108,32 +130,19 @@ GroupFrames.defaults = {
   epicRaid = "Primary",
 }
 
-function GroupFrames:OnEnable()
-  self:RegisterBucketEvent("GROUP_ROSTER_UPDATE", 1, "RosterUpdate")
-  self:RegisterEvent("PLAYER_REGEN_ENABLED")
-  self:RegisterEvent("PLAYER_REGEN_DISABLED")
-  self:RegisterEvent("PLAYER_ENTERING_WORLD")
-end
-
-function GroupFrames:PLAYER_ENTERING_WORLD()
-  C_CVar.SetCVar("useCompactPartyFrames", 1)
-end
-
 function GroupFrames:SwitchRaidProfile()
-  local profileList = WhentConfig.db.profile.GroupFrames
-
   if self.newGroupSize <= 3 then
-    CompactUnitFrameProfiles_ActivateRaidProfile(profileList.small)
+    CompactUnitFrameProfiles_ActivateRaidProfile(db.small)
   elseif self.newGroupSize > 3 and self.newGroupSize <= 5 then
-    CompactUnitFrameProfiles_ActivateRaidProfile(profileList.medium)
+    CompactUnitFrameProfiles_ActivateRaidProfile(db.medium)
   elseif self.newGroupSize > 5 and self.newGroupSize <= 10 then
-    CompactUnitFrameProfiles_ActivateRaidProfile(profileList.smallRaid)
+    CompactUnitFrameProfiles_ActivateRaidProfile(db.smallRaid)
   elseif self.newGroupSize > 10 and self.newGroupSize <= 15 then
-    CompactUnitFrameProfiles_ActivateRaidProfile(profileList.mediumRaid)
+    CompactUnitFrameProfiles_ActivateRaidProfile(db.mediumRaid)
   elseif self.newGroupSize > 15 and self.newGroupSize <= 25 then
-    CompactUnitFrameProfiles_ActivateRaidProfile(profileList.largeRaid)
+    CompactUnitFrameProfiles_ActivateRaidProfile(db.largeRaid)
   elseif self.newGroupSize > 25 then
-    CompactUnitFrameProfiles_ActivateRaidProfile(profileList.epicRaid)
+    CompactUnitFrameProfiles_ActivateRaidProfile(db.epicRaid)
   end
 
   if not self.inCombat then
@@ -156,16 +165,48 @@ end
 
 function GroupFrames:GroupFramesSetter(info, val)
   local raidProfileName = GetRaidProfileName(val)
-  WhentConfig.db.profile.GroupFrames[info[#info]] = raidProfileName
+  db[info[#info]] = raidProfileName
   self:DisableBlizzAutoActivate(raidProfileName)
 end
 
 function GroupFrames:GroupFramesGetter(info)
   for key, value in pairs(self:PopulateGroupFrames()) do
-    if value == WhentConfig.db.profile.GroupFrames[info[#info]] then
+    if value == db[info[#info]] then
       return key
     end
   end
+end
+
+function GroupFrames:ToggleRaidStyleSetter(info, val)
+  if val == false then
+    C_CVar.SetCVar("useCompactPartyFrames", 0)
+  elseif val == true then
+    C_CVar.SetCVar("useCompactPartyFrames", 1)
+  end
+
+  local disabled = true
+  if C_CVar.GetCVar("useCompactPartyFrames") == "1" then
+    disabled = false
+  end
+
+  db[info[#info]] = val
+  GroupFrames.options.args.small.disabled = disabled
+  GroupFrames.options.args.medium.disabled = disabled
+
+  CompactUnitFrameProfiles_UpdateCurrentPanel()
+  CompactUnitFrameProfiles_ApplyCurrentSettings()
+end
+
+function GroupFrames:ToggleRaidStyleGetter(info)
+  return db[info[#info]]
+end
+
+function GroupFrames:UpdateRaidStyleSelector()
+  if db.raidStyleToggle then
+    return false
+  end
+
+  return true
 end
 
 function GroupFrames:RosterUpdate()
