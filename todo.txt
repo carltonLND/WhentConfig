@@ -2,4 +2,4 @@ Core Addon:
   Add logo
 
 Group Frames:
-  (?) Disable blizzard's "auto activate on" raid profile options from interface options panel (?)
+  Add toggle arg for Raid-Style Party Frames that disables 2/3 & 5 player group drop down options when disabled
