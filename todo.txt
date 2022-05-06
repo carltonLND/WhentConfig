@@ -1,5 +1,2 @@
 Core Addon:
   Add logo
-
-Group Frames:
-  Add toggle arg for Raid-Style Party Frames that disables 2/3 & 5 player group drop down options when disabled
