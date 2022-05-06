@@ -38,6 +38,7 @@ GroupFrames.options = {
     raidStyleToggle = {
       name = "Use Raid-Style Party Frames",
       type = "toggle",
+      desc = "Enables Raid Frames for regular party sized groups.",
       order = 3,
       get = "ToggleRaidStyleGetter",
       set = "ToggleRaidStyleSetter",
@@ -45,7 +46,7 @@ GroupFrames.options = {
     },
     small = {
       name = "2/3 Player Group",
-      desc = "Raid profile to use in a 2/3 player group (e.g. Arenas)",
+      desc = "Raid profile to use in a 2/3 player group (e.g. Arenas).",
       order = 4,
       type = "select",
       values = "PopulateGroupFrames",
@@ -55,7 +56,7 @@ GroupFrames.options = {
     },
     medium = {
       name = "5 Player Group",
-      desc = "Raid profile to use in a 5 player group (e.g. Dungeons)",
+      desc = "Raid profile to use in a 5 player group (e.g. Dungeons).",
       order = 5,
       type = "select",
       values = "PopulateGroupFrames",
@@ -65,7 +66,7 @@ GroupFrames.options = {
     },
     smallRaid = {
       name = "10 Player Group",
-      desc = "Raid profile to use in a 10 player group (e.g. Small Raids/Battlegrounds)",
+      desc = "Raid profile to use in a 10 player group (e.g. Small Raids/Battlegrounds).",
       order = 6,
       type = "select",
       values = "PopulateGroupFrames",
@@ -74,7 +75,7 @@ GroupFrames.options = {
     },
     mediumRaid = {
       name = "15 Player Group",
-      desc = "Raid profile to use in a 15 player group (e.g. Medium Raids/Battlegrounds)",
+      desc = "Raid profile to use in a 15 player group (e.g. Medium Raids/Battlegrounds).",
       order = 7,
       type = "select",
       values = "PopulateGroupFrames",
@@ -83,7 +84,7 @@ GroupFrames.options = {
     },
     largeRaid = {
       name = "25 Player Group",
-      desc = "Raid profile to use in a 25 player group (e.g. Large Raids/Battlegrounds)",
+      desc = "Raid profile to use in a 25 player group (e.g. Large Raids/Battlegrounds).",
       order = 8,
       type = "select",
       values = "PopulateGroupFrames",
@@ -92,7 +93,7 @@ GroupFrames.options = {
     },
     epicRaid = {
       name = "40 Player Group",
-      desc = "Raid profile to use in a 40 player group (e.g. Epic Raids/Battlegrounds)",
+      desc = "Raid profile to use in a 40 player group (e.g. Epic Raids/Battlegrounds).",
       order = 9,
       type = "select",
       values = "PopulateGroupFrames",
