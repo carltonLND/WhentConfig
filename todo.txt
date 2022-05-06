@@ -1,2 +1,4 @@
 Core Addon:
   Add logo
+  Remove unneeded dependencies
+  Add optional dependencies to WhentConfig.toc
