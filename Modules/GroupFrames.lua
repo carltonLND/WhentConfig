@@ -9,6 +9,7 @@ function GroupFrames:OnEnable()
   self:RegisterBucketEvent("GROUP_ROSTER_UPDATE", 1, "RosterUpdate")
   self:RegisterEvent("PLAYER_REGEN_ENABLED")
   self:RegisterEvent("PLAYER_REGEN_DISABLED")
+  self:RegisterEvent("CVAR_UPDATE")
 end
 
 GroupFrames.scheduledProfileUpdate = false
@@ -178,20 +179,13 @@ function GroupFrames:GroupFramesGetter(info)
 end
 
 function GroupFrames:ToggleRaidStyleSetter(info, val)
+  db[info[#info]] = val
+
   if val == false then
     C_CVar.SetCVar("useCompactPartyFrames", 0)
   elseif val == true then
     C_CVar.SetCVar("useCompactPartyFrames", 1)
   end
-
-  local disabled = true
-  if C_CVar.GetCVar("useCompactPartyFrames") == "1" then
-    disabled = false
-  end
-
-  db[info[#info]] = val
-  GroupFrames.options.args.small.disabled = disabled
-  GroupFrames.options.args.medium.disabled = disabled
 
   CompactUnitFrameProfiles_UpdateCurrentPanel()
   CompactUnitFrameProfiles_ApplyCurrentSettings()
@@ -217,6 +211,16 @@ function GroupFrames:RosterUpdate()
   end
 
   self:SwitchRaidProfile()
+end
+
+function GroupFrames:CVAR_UPDATE(_, var, value)
+  if var == "USE_RAID_STYLE_PARTY_FRAMES" then
+    if value == "0" then
+      db.raidStyleToggle = false
+    else
+      db.raidStyleToggle = true
+    end
+  end
 end
 
 function GroupFrames:PLAYER_REGEN_ENABLED()
