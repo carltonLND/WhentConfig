@@ -133,18 +133,18 @@ GroupFrames.defaults = {
 }
 
 function GroupFrames:SwitchRaidProfile()
-  if self.newGroupSize <= 3 then
-    CompactUnitFrameProfiles_ActivateRaidProfile(db.small)
-  elseif self.newGroupSize > 3 and self.newGroupSize <= 5 then
-    CompactUnitFrameProfiles_ActivateRaidProfile(db.medium)
-  elseif self.newGroupSize > 5 and self.newGroupSize <= 10 then
-    CompactUnitFrameProfiles_ActivateRaidProfile(db.smallRaid)
-  elseif self.newGroupSize > 10 and self.newGroupSize <= 15 then
-    CompactUnitFrameProfiles_ActivateRaidProfile(db.mediumRaid)
-  elseif self.newGroupSize > 15 and self.newGroupSize <= 25 then
-    CompactUnitFrameProfiles_ActivateRaidProfile(db.largeRaid)
-  elseif self.newGroupSize > 25 then
+  if self.newGroupSize > 25 then
     CompactUnitFrameProfiles_ActivateRaidProfile(db.epicRaid)
+  elseif self.newGroupSize > 15 then
+    CompactUnitFrameProfiles_ActivateRaidProfile(db.largeRaid)
+  elseif self.newGroupSize > 10 then
+    CompactUnitFrameProfiles_ActivateRaidProfile(db.mediumRaid)
+  elseif self.newGroupSize > 5 then
+    CompactUnitFrameProfiles_ActivateRaidProfile(db.smallRaid)
+  elseif self.newGroupSize > 3 then
+    CompactUnitFrameProfiles_ActivateRaidProfile(db.medium)
+  else
+    CompactUnitFrameProfiles_ActivateRaidProfile(db.small)
   end
 
   if not self.inCombat then
