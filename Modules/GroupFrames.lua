@@ -225,7 +225,7 @@ function GroupFrames:CVAR_UPDATE(_, var, value)
 end
 
 function GroupFrames:PLAYER_REGEN_ENABLED()
-  if InCombatLockdown() == true then
+  if InCombatLockdown() then
     self.inCombat = true
     return
   end
@@ -237,7 +237,7 @@ function GroupFrames:PLAYER_REGEN_ENABLED()
 end
 
 function GroupFrames:PLAYER_REGEN_DISABLED()
-  if InCombatLockdown() == false then
+  if not InCombatLockdown() then
     self.inCombat = false
     return
   end
