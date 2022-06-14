@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <Ui>
   <!-- Dependencies -->
   <Script file="Libs\LibStub\LibStub.lua"/>
@@ -10,10 +11,8 @@
   <Include file="Libs\AceBucket-3.0\AceBucket-3.0.xml"/>
   <Include file="Libs\AceGUI-3.0\AceGUI-3.0.xml"/>
   <Include file="Libs\AceConfig-3.0\AceConfig-3.0.xml"/>
-
   <!-- Core -->
   <Script file="WhentConfig.lua"/>
-
   <!-- Modules -->
   <Script file="Modules\GroupFrames.lua"/>
 </Ui>

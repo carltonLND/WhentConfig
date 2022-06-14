@@ -1,2 +1,0 @@
-TODO: 
-  - Alter execution of profile switching to a secure hook in hopes of eliminating annoying harmless taint
